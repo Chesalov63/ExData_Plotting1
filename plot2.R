@@ -8,6 +8,7 @@ unzip(filename)
 
 ## Read the data from dates 2007-02-01 and 2007-02-02 (2880 records)
 library(data.table)
+library(dplyr)
 filename <- "household_power_consumption.txt"
 headerDT <- fread(filename, sep = ";", na.strings = "?", nrows=0)
 powerDT <- fread(filename, sep = ";", na.strings = "?", skip = "1/2/2007", 
@@ -15,8 +16,16 @@ powerDT <- fread(filename, sep = ";", na.strings = "?", skip = "1/2/2007",
 ## Remove the original file, it's too big to keep it unzipped
 file.remove(filename)
 
+## Set locale in case it differs from North-American usage
+Sys.setlocale("LC_TIME", "C")
+## Create new column, baceuse we need Date and Time in POSIXct format
+powerDT <- mutate(powerDT, DateTime = as.POSIXct(strptime(paste(Date, Time), 
+                                                          "%d/%m/%Y %H:%M:%S")
+                                                 )
+                  )
+
 ## Construct the plot and save it to a PNG file (480x480 by default)
-png("plot1.png")
-hist(powerDT$Global_active_power, col = "red", main = "Global Active Power", 
-     xlab = "Global Active Power (kilowatts)")
+png("plot2.png")
+with(powerDT, plot(Global_active_power ~ DateTime, type = "l", 
+                   ylab = "Global Active Power (kilowatts)", xlab = ""))
 dev.off()
