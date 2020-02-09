@@ -18,7 +18,7 @@ file.remove(filename)
 
 ## Set locale in case it differs from North-American usage
 Sys.setlocale("LC_TIME", "C")
-## Create new column, baceuse we need Date and Time in POSIXct format
+## Create new column, because we need Date and Time in POSIXct format
 powerDT <- mutate(powerDT, DateTime = as.POSIXct(strptime(paste(Date, Time), 
                                                           "%d/%m/%Y %H:%M:%S")
                                                  )
